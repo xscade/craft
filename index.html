@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CRAFT Prompt Converter</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="page">
+      <header class="header">
+        <h1>CRAFT your prompt</h1>
+        <p class="lede">
+          Turn a rough idea into structured
+          <abbr title="Context, Role, Action, Format, Tone">CRAFT</abbr> syntax—ready for any assistant. If something
+          important is missing, the model may ask a few questions (streamed live); otherwise it goes straight to CRAFT.
+        </p>
+      </header>
+
+      <main class="grid">
+        <section class="panel input-panel">
+          <label for="prompt" class="label">Your prompt (before)</label>
+          <textarea
+            id="prompt"
+            rows="10"
+            placeholder="e.g. Can you help me make a quiz for my students about photosynthesis? Make it interesting."
+            spellcheck="true"
+          ></textarea>
+          <div class="actions">
+            <button type="button" id="convert" class="btn primary">Convert to CRAFT</button>
+            <span id="status" class="status" aria-live="polite"></span>
+          </div>
+          <div id="stream-wrap" class="stream-wrap hidden" aria-live="polite">
+            <span class="label stream-label">Assistant (live)</span>
+            <pre id="stream-preview" class="stream-preview"></pre>
+          </div>
+          <div id="clarify-panel" class="clarify-panel hidden">
+            <p class="clarify-lede">A bit more context will sharpen your CRAFT prompt. Answer below, then generate the final output.</p>
+            <ol id="question-list" class="question-list"></ol>
+            <label for="answers" class="label">Your answers</label>
+            <textarea
+              id="answers"
+              rows="5"
+              placeholder="Answer each question in order (paragraph or bullets are fine)."
+              spellcheck="true"
+            ></textarea>
+            <div class="actions clarify-actions">
+              <button type="button" id="submit-answers" class="btn primary">Generate CRAFT</button>
+              <button type="button" id="cancel-clarify" class="btn ghost">Start over</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel output-panel">
+          <div class="output-head">
+            <label for="output" class="label">CRAFT output</label>
+            <button type="button" id="copy" class="btn ghost" disabled>Copy</button>
+          </div>
+          <pre id="output" class="output" aria-live="polite"></pre>
+          <p class="hint">Each line should look like <code>[C]</code>, <code>[R]</code>, <code>[A]</code>, <code>[F]</code>, <code>[T]</code>.</p>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <p>
+          Local: add <code>OPENAI_API_KEY</code> to <code>.env</code> (see <code>.env.example</code>). Deployed: set the same
+          variable in the Vercel project’s Environment Variables.
+        </p>
+      </footer>
+    </div>
+    <script src="/app.js"></script>
+  </body>
+</html>

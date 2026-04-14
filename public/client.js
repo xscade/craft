@@ -24,6 +24,30 @@ let craftClipboardSource = "";
  * @param {string} text
  * @returns {Promise<boolean>}
  */
+/**
+ * CRAFT lines → plain prompt for pasting elsewhere (no [C]/[R]/… prefixes).
+ * Drops junk lines like a bare "[C][R][A][F][T]".
+ * @param {string} craft
+ * @returns {string}
+ */
+function craftToPlainClipboard(craft) {
+  const lines = craft.trim().split(/\r?\n/);
+  const parts = [];
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line) continue;
+    const compact = line.replace(/\s+/g, "");
+    if (compact === "[C][R][A][F][T]") continue;
+    if (/^(\[C\]|\[R\]|\[A\]|\[F\]|\[T\])+$/.test(compact)) continue;
+    const m = line.match(/^\[(C|R|A|F|T)\]\s+(.*)$/);
+    if (m) {
+      const body = m[2].trim();
+      if (body) parts.push(body);
+    }
+  }
+  return parts.join("\n\n");
+}
+
 async function copyTextToClipboard(text) {
   if (!text) return false;
   try {
@@ -241,8 +265,13 @@ function cancelClarify() {
 async function copyOutput() {
   const text = craftClipboardSource || outputEl.textContent || "";
   if (!text.trim()) return;
-  const ok = await copyTextToClipboard(text);
-  if (ok) setStatus("Copied to clipboard");
+  const plain = craftToPlainClipboard(text);
+  if (!plain.trim()) {
+    setStatus("Nothing to copy after removing CRAFT tags.", true);
+    return;
+  }
+  const ok = await copyTextToClipboard(plain);
+  if (ok) setStatus("Copied plain prompt (no [C]–[T] tags)");
   else setStatus("Could not copy", true);
 }
 

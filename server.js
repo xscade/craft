@@ -108,8 +108,8 @@ app.post("/api/craft/stream", async (req, res) => {
 app.get("/", (_req, res) => {
   res.sendFile(path.join(root, "index.html"));
 });
-app.get("/app.js", (_req, res) => {
-  res.sendFile(path.join(root, "app.js"));
+app.get("/client.js", (_req, res) => {
+  res.sendFile(path.join(root, "client.js"));
 });
 app.get("/styles.css", (_req, res) => {
   res.sendFile(path.join(root, "styles.css"));

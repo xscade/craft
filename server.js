@@ -15,7 +15,7 @@ dotenv.config({ path: path.join(__dirname, ".env") });
 dotenv.config({ path: path.join(__dirname, ".env.local") });
 const app = express();
 const PORT = process.env.PORT || 3000;
-const root = __dirname;
+const publicDir = path.join(__dirname, "public");
 
 app.use(express.json({ limit: "64kb" }));
 
@@ -105,26 +105,22 @@ app.post("/api/craft/stream", async (req, res) => {
   res.end();
 });
 
-app.get("/", (_req, res) => {
-  res.sendFile(path.join(root, "index.html"));
-});
-app.get("/client.js", (_req, res) => {
-  res.sendFile(path.join(root, "client.js"));
-});
-app.get("/styles.css", (_req, res) => {
-  res.sendFile(path.join(root, "styles.css"));
-});
+app.use(express.static(publicDir));
 
-const server = app.listen(PORT, () => {
-  console.log(`CRAFT converter at http://localhost:${PORT}`);
-});
-server.on("error", (err) => {
-  if (err && err.code === "EADDRINUSE") {
-    console.error(
-      `Port ${PORT} is already in use. Stop the other server (try: lsof -i :${PORT}) or run with PORT=3001 npm run dev`,
-    );
-  } else {
-    console.error(err);
-  }
-  process.exit(1);
-});
+export default app;
+
+if (!process.env.VERCEL) {
+  const server = app.listen(PORT, () => {
+    console.log(`CRAFT converter at http://localhost:${PORT}`);
+  });
+  server.on("error", (err) => {
+    if (err && err.code === "EADDRINUSE") {
+      console.error(
+        `Port ${PORT} is already in use. Stop the other server (try: lsof -i :${PORT}) or run with PORT=3001 npm run dev`,
+      );
+    } else {
+      console.error(err);
+    }
+    process.exit(1);
+  });
+}

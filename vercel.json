@@ -1,9 +1,6 @@
 {
   "functions": {
-    "api/craft.js": {
-      "maxDuration": 60
-    },
-    "api/craft/stream.js": {
+    "server.js": {
       "maxDuration": 60
     }
   }
